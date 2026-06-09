@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Order Success - Modern Shop</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <main class="container center" style="padding:80px 0;flex-direction:column">
+    <div class="card center" style="max-width:720px;padding:28px">
+      <div style="font-size:48px;color:var(--success)">✓</div>
+      <h2>Thank you! Your order has been placed.</h2>
+      <div id="order-info" style="margin-top:12px"></div>
+      <div style="margin-top:18px;display:flex;gap:12px"><a href="index.html" class="btn btn-secondary">Continue Shopping</a><a href="" id="download-invoice" class="btn btn-primary">Download Invoice</a></div>
+    </div>
+  </main>
+  <script>
+    const infoEl = document.getElementById('order-info');
+    const raw = localStorage.getItem('last_order');
+    if(!raw){infoEl.innerHTML='No order found';} else {
+      const order = JSON.parse(raw);
+      const est = new Date(); est.setDate(est.getDate()+5);
+      infoEl.innerHTML = `<p>Order ID: <strong>${order.id}</strong></p><p>Order Date: ${new Date(order.date).toLocaleString()}</p><p>Estimated Delivery: ${est.toDateString()}</p><h4 style="margin-top:12px">Items</h4>`;
+      order.items.forEach(i=>{infoEl.innerHTML += `<div style="display:flex;justify-content:space-between">${i.name} x ${i.quantity} <strong>$${(i.price*i.quantity).toFixed(2)}</strong></div>`});
+      infoEl.innerHTML += `<p style="margin-top:12px">Total: <strong>$${order.amount.toFixed(2)}</strong></p>`;
+      document.getElementById('download-invoice').addEventListener('click',(e)=>{e.preventDefault();alert('Invoice download (demo)');});
+      // orders storage
+      const orders = JSON.parse(localStorage.getItem('orders')||'[]'); orders.push(order); localStorage.setItem('orders', JSON.stringify(orders));
+      // clear last_order
+      localStorage.removeItem('last_order');
+    }
+  </script>
+</body>
+</html>

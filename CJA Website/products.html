@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Products - Modern Shop</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <div class="logo">ModernShop</div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="cart.html">Cart</a>
+      </nav>
+      <div class="nav-actions">
+        <form id="search-form"><input id="search-input" placeholder="Search products..." class="search-input"><button class="btn btn-secondary" type="submit">Search</button></form>
+        <div class="cart-btn"><a href="cart.html">Cart</a><span class="cart-count">0</span></div>
+        <button class="hamburger">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0">
+      <div>
+        <h2>Products</h2>
+        <div class="breadcrumbs">Home / Products</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <select id="category-filter" class="select"><option value="all">All Categories</option><option>Electronics</option><option>Fashion</option><option>Shoes</option><option>Accessories</option><option>Home Decor</option></select>
+        <select id="sort-select" class="select"><option value="default">Sort</option><option value="price-asc">Price Low to High</option><option value="price-desc">Price High to Low</option><option value="rating-desc">Highest Rated</option></select>
+      </div>
+    </div>
+
+    <div id="products-grid" class="grid"></div>
+    <button id="load-more" class="load-more btn btn-secondary">Load More</button>
+
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+      const all = window.PRODUCTS.slice();
+      let shown = 8;
+      function renderList(){
+        const grid = document.getElementById('products-grid'); grid.innerHTML='';
+        const q = new URLSearchParams(location.search).get('search')||'';
+        const cat = document.getElementById('category-filter').value;
+        const sort = document.getElementById('sort-select').value;
+        let list = all.filter(p=>p.name.toLowerCase().includes(q.toLowerCase()));
+        if(cat && cat!=='all') list = list.filter(p=>p.category===cat);
+        if(sort==='price-asc') list.sort((a,b)=>a.price-b.price);
+        if(sort==='price-desc') list.sort((a,b)=>b.price-a.price);
+        if(sort==='rating-desc') list.sort((a,b)=>b.rating-b.rating?b.rating-a.rating:0);
+        list.slice(0,shown).forEach(p=>{
+          const card=document.createElement('div');card.className='card';
+          card.innerHTML=`<img class="prod-img" src="${p.image}"><div class="prod-title">${p.name}</div><div class="prod-meta"><div class="muted">${p.category} · ${p.rating}★</div><div class="price">$${p.price.toFixed(2)}</div></div><div style="display:flex;gap:8px"><a class="btn btn-secondary" href="product-details.html?id=${p.id}">View Details</a><button class="btn btn-primary" onclick='window.ECOM.addToCart(${JSON.stringify(p)},1)'>Add to Cart</button></div>`;
+          grid.appendChild(card);
+        });
+        document.getElementById('load-more').style.display = list.length>shown? 'block':'none';
+      }
+      document.addEventListener('DOMContentLoaded',()=>{
+        renderList();
+        document.getElementById('category-filter').addEventListener('change',()=>{shown=8;renderList()});
+        document.getElementById('sort-select').addEventListener('change',()=>{renderList()});
+        document.getElementById('load-more').addEventListener('click',()=>{shown+=8;renderList()});
+      });
+    </script>
+  </main>
+
+  <div id="toast-container"></div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Order Failed - Modern Shop</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <main class="container center" style="padding:80px 0;flex-direction:column">
+    <div class="card center" style="max-width:720px;padding:28px">
+      <div style="font-size:48px;color:var(--danger)">✕</div>
+      <h2>Payment Failed</h2>
+      <div id="fail-info" style="margin-top:12px"></div>
+      <div style="margin-top:18px;display:flex;gap:12px"><a href="cart.html" class="btn btn-secondary">Return to Cart</a><a href="checkout.html" id="retry-btn" class="btn btn-primary">Retry Payment</a></div>
+    </div>
+  </main>
+  <script>
+    const raw = localStorage.getItem('last_order_failure');
+    const el = document.getElementById('fail-info');
+    if(!raw) el.innerHTML='No failure details available.'; else {
+      const f = JSON.parse(raw);
+      el.innerHTML = `<p>Reason: <strong>${f.reason}</strong></p><p>Order preserved in cart. Please try again.</p>`;
+      document.getElementById('retry-btn').addEventListener('click',()=>{window.location='checkout.html'});
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cart - Modern Shop</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <div class="logo">ModernShop</div>
+      <nav class="nav-links"><a href="index.html">Home</a><a href="products.html">Products</a><a href="cart.html">Cart</a></nav>
+      <div class="nav-actions"><div class="cart-btn"><a href="cart.html">Cart</a><span class="cart-count">0</span></div><button class="hamburger">☰</button></div>
+    </div>
+  </header>
+  <main class="container">
+    <h2>Your Cart</h2>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px">
+      <div class="card">
+        <table class="cart-table"><thead><tr><th>Product</th><th></th><th>Price</th><th>Qty</th><th>Subtotal</th></tr></thead>
+          <tbody id="cart-body"></tbody></table>
+      </div>
+      <div id="cart-summary"></div>
+    </div>
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/cart.js"></script>
+  </main>
+  <div id="toast-container"></div>
+</body>
+</html>

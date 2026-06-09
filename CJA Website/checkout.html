@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Checkout - Modern Shop</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <div class="logo">ModernShop</div>
+      <nav class="nav-links"><a href="index.html">Home</a><a href="products.html">Products</a><a href="cart.html">Cart</a></nav>
+      <div class="nav-actions"><div class="cart-btn"><a href="cart.html">Cart</a><span class="cart-count">0</span></div><button class="hamburger">☰</button></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Checkout</h2>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px">
+      <form id="checkout-form" class="form">
+        <h3>Customer Information</h3>
+        <div class="form-row"><input class="input" name="fullname" placeholder="Full name"><div class="error" data-error="fullname"></div><input class="input" name="email" placeholder="Email"><div class="error" data-error="email"></div></div>
+        <div style="height:12px"></div>
+        <div class="form-row"><input class="input" name="phone" placeholder="Phone"><div class="error" data-error="phone"></div><input class="input" name="address1" placeholder="Address Line 1"><div class="error" data-error="address1"></div></div>
+        <div class="form-row" style="margin-top:12px"><input class="input" name="address2" placeholder="Address Line 2"><input class="input" name="city" placeholder="City"><div class="error" data-error="city"></div></div>
+        <div class="form-row" style="margin-top:12px"><input class="input" name="state" placeholder="State"><input class="input" name="zip" placeholder="ZIP"><div class="error" data-error="zip"></div></div>
+        <h3 style="margin-top:18px">Payment Information</h3>
+        <div class="form-row"><input class="input" name="card" placeholder="Card number"><div class="error" data-error="card"></div><input class="input" name="expiry" placeholder="MM/YY"><div class="error" data-error="expiry"></div></div>
+        <div class="form-row" style="margin-top:12px"><input class="input" name="cvv" placeholder="CVV"><input class="input" name="cardname" placeholder="Card holder name"><div class="error" data-error="cvv"></div></div>
+        <div style="margin-top:18px;display:flex;gap:8px;align-items:center">
+          <button id="place-order-btn" class="btn btn-primary" type="submit">Place Order</button>
+          <button id="proceed-order" type="button" class="btn btn-secondary">Proceed Order</button>
+          <button id="order-failure-btn" type="button" class="btn btn-secondary">Order Failure</button>
+        </div>
+      </form>
+<script>
+/* Adobe Client Data Layer */
+window.adobeDataLayer = window.adobeDataLayer || [];
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const checkoutForm = document.getElementById("checkout-form");
+
+    if (!checkoutForm) return;
+
+    checkoutForm.addEventListener("submit", function (e) {
+
+        // Capture form values
+        const fullName = document.querySelector('[name="fullname"]')?.value.trim() || "";
+        const email = document.querySelector('[name="email"]')?.value.trim() || "";
+        const mobileNo = document.querySelector('[name="phone"]')?.value.trim() || "";
+
+        // Create Lead Object
+        const leadData = {
+            fullName: fullName,
+            email: email,
+            mobileNo: mobileNo,
+            timestamp: new Date().toISOString()
+        };
+
+        // Store in Session Storage
+        sessionStorage.setItem("leadData", JSON.stringify(leadData))
+        sessionStorage.setItem("fullName", fullName);
+        sessionStorage.setItem("email", email);
+        sessionStorage.setItem("mobileNo", mobileNo);
+
+        // Push to Adobe Data Layer
+        window.adobeDataLayer.push({
+            event: "checkoutLeadCaptured",
+            lead: {
+                fullName: fullName,
+                email: email,
+                mobileNo: mobileNo,
+                platform:'Online'
+            }
+        });
+
+        console.log("Lead Data Stored:", leadData);
+        console.log("Adobe Data Layer:", window.adobeDataLayer);
+    });
+
+});
+</script>
+      <aside class="form">
+        <h3>Order Summary</h3>
+        <div id="order-list" style="margin-bottom:12px"></div>
+        <div id="order-totals"></div>
+      </aside>
+    </div>
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/checkout.js"></script>
+  </main>
+  <div id="toast-container"></div>
+</body>
+</html>

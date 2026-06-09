@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Product Details - Modern Shop</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <div class="logo">ModernShop</div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="cart.html">Cart</a>
+      </nav>
+      <div class="nav-actions"><div class="cart-btn"><a href="cart.html">Cart</a><span class="cart-count">0</span></div><button class="hamburger">☰</button></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="breadcrumbs" class="breadcrumbs">Home / Products / Details</div>
+    <div id="product-area" class="details"></div>
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+      function qs(p){return document.querySelector(p)}
+      const params = new URLSearchParams(location.search); const id = parseInt(params.get('id'),10);
+      const p = window.PRODUCTS.find(x=>x.id===id);
+      const area = qs('#product-area');
+      if(!p){area.innerHTML='<div class="card">Product not found</div>'}
+      else{
+        area.innerHTML = `
+          <div class="gallery">
+            <img class="big-img" src="${p.image}" id="main-img">
+            <div class="thumbs"><img src="${p.image}" style="width:80px;height:60px;object-fit:cover;border-radius:8px;cursor:pointer" onclick="document.getElementById('main-img').src='${p.image}'"></div>
+          </div>
+          <div>
+            <h2>${p.name}</h2>
+            <div class="muted">${p.category} · ${p.rating}★</div>
+            <p style="margin-top:12px">${p.description}</p>
+            <div style="margin-top:12px"><span class="price">$${p.price.toFixed(2)}</span> <span class="muted" style="margin-left:12px">${p.stock>0? 'In stock':'Out of stock'}</span></div>
+            <div style="margin-top:12px" class="qty"><button id="dec" class="btn btn-secondary">-</button><input id="qty" value="1" style="width:54px;text-align:center;border:1px solid #e6e9ef;padding:8px;border-radius:8px"><button id="inc" class="btn btn-secondary">+</button></div>
+            <div style="margin-top:12px"><button id="add-cart" class="btn btn-primary">Add to Cart</button></div>
+          </div>
+<div style="margin-top:30px;padding:20px;border:1px solid #ddd;border-radius:10px;">
+  <h3>Request More Information</h3>
+
+  <form id="leadForm">
+    <div style="margin-bottom:10px;">
+      <input type="text" id="firstName" placeholder="First Name" required
+        style="width:100%;padding:10px;">
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <input type="text" id="lastName" placeholder="Last Name" required
+        style="width:100%;padding:10px;">
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <input type="tel" id="mobile" placeholder="Mobile Number"
+        pattern="[0-9]{10}" maxlength="10" required
+        style="width:100%;padding:10px;">
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <input type="email" id="email" placeholder="Email Address" required
+        style="width:100%;padding:10px;">
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      Submit Lead
+    </button>
+  </form>
+
+  <div id="leadSuccess"
+       style="display:none;margin-top:15px;color:green;font-weight:bold;">
+  </div>
+</div>
+        `;
+//Addto cart eventlistener
+        let q=1; document.getElementById('inc').addEventListener('click',()=>{q++;document.getElementById('qty').value=q});
+        document.getElementById('dec').addEventListener('click',()=>{q=Math.max(1,q-1);document.getElementById('qty').value=q});
+        document.getElementById('add-cart').addEventListener('click',()=>{window.ECOM.addToCart(p,parseInt(document.getElementById('qty').value,10));});
+
+
+document.getElementById('leadForm').addEventListener('submit', function (e) {
+
+    e.preventDefault();
+
+    // Get form values
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
+    const email = document.getElementById('email').value.trim();
+
+    // Generate Lead ID
+    const leadId = 'LEAD-' + Date.now();
+
+    // Store in session storage
+    sessionStorage.setItem('leadData', JSON.stringify({
+        leadId,
+        firstName,
+        lastName,
+        mobile,
+        email
+    }));
+
+  
+    document.getElementById('leadSuccess').innerHTML =
+        'Lead submitted successfully. Lead ID: ' + leadId;
+
+});
+
+
+
+
+//lead form eventlistener
+
+document.getElementById('leadForm').addEventListener('submit', function(e){
+
+
+    e.preventDefault();
+
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
+    const email = document.getElementById('email').value.trim();
+
+    const leadId =
+        'LEAD-' +
+        Date.now() +
+        '-' +
+        Math.floor(Math.random() * 10000);
+
+    const leadData = {
+        leadId,
+        firstName,
+        lastName,
+        mobile,
+        email,
+
+        productId: p.id,
+        productName: p.name,
+        productCategory: p.category,
+        productPrice: p.price,
+
+        timestamp: new Date().toISOString()
+    };
+
+    // Store complete lead object
+    sessionStorage.setItem(
+        'leadData',
+        JSON.stringify(leadData)
+    );
+
+    // Store individual fields
+    sessionStorage.setItem('leadId', leadId);
+    sessionStorage.setItem('firstName', firstName);
+    sessionStorage.setItem('lastName', lastName);
+    sessionStorage.setItem('mobile', mobile);
+    sessionStorage.setItem('email', email);
+
+    // Data Layer Push
+    window.adobeDataLayer = window.adobeDataLayer || [];
+
+    window.adobeDataLayer.push({
+        event: 'leadSubmitted',
+        leadId: leadId,
+
+        firstName: firstName,
+        lastName: lastName,
+        mobile: mobile,
+        email: email,
+        platform:"Store",
+
+        productId: p.id,
+        productName: p.name,
+        productCategory: p.category,
+        productPrice: p.price
+    });
+
+    console.log('Lead Data:', leadData);
+    console.log('Data Layer:', window.adobeDataLayer);
+
+    document.getElementById('leadSuccess').style.display = 'block';
+    document.getElementById('leadSuccess').innerHTML =
+        'Lead submitted successfully. Lead ID: ' + leadId;
+
+    this.reset();
+});
+const leadData = JSON.parse(
+    sessionStorage.getItem('leadData')
+);
+
+
+      
+}
+    </script>
+  </main>
+  <div id="toast-container"></div>
+</body>
+</html>
