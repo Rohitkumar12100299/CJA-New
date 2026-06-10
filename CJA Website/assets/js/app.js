@@ -21,7 +21,7 @@
   function pushADL(obj){window.adobeDataLayer.push(obj);console.info('adobeDataLayer push:',obj)}
 
   function getCustData(){
-    return {loginStatus:false,platform:navigator.platform,language:navigator.language,email:localStorage.getItem('user_email')||undefined};
+    return {loginStatus:'Guest',platform:navigator.platform,language:navigator.language,email:localStorage.getItem('user_email')||undefined};
   }
 
   function webDetails(){
