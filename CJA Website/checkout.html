@@ -68,12 +68,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // Push to Adobe Data Layer
         window.adobeDataLayer.push({
             event: "checkoutLeadCaptured",
-            lead: {
+            
                 fullName: fullName,
                 email: email,
                 mobileNo: mobileNo,
                 platform:'Online'
-            }
+            
         });
 
         console.log("Lead Data Stored:", leadData);
