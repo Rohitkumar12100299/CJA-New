@@ -27,16 +27,59 @@
   function webDetails(){
     return {webPageDetails:{siteName:'ModernShop',pageName:document.title,pageType:location.pathname.replace('/','')||'home',channel:'ecommerce',pageURL:location.href}};
   }
+  function getHydratestSegment() {
+
+  const path = location.pathname.split('/').pop() || 'index.html';
+
+  const segmentMap = {
+    'index.html': 'r1145',
+    'products.html': 'r1148',
+    'product-details.html': 'r1200',
+    'cart.html': 'r1300',
+    'checkout.html': 'r1400',
+    'order-success.html': 'r1500',
+    'order-failure.html': 'r1600'
+  };
+
+  return segmentMap[path] || 'r0000';
+}
+
+
+function getHydratestSegmentHistory() {
+
+  let segments = JSON.parse(
+    sessionStorage.getItem('Hydratestsegment')
+  ) || [];
+
+  segments.push(getHydratestSegment());
+
+  sessionStorage.setItem(
+    'Hydratestsegment',
+    JSON.stringify(segments)
+  );
+
+  return segments;
+}
 
   function buildProductXdm(p,qty=1){
     return {productID:p.id,productName:p.name,SKU:p.id,price:p.price,quantity:qty,productImageUrl:p.image,currencyCode:'USD'};
   }
 
-  function pushPageLoaded(extra={}){
-    const base = {event:'pageLoaded',xdmPageLoad:{custData:getCustData()},web:webDetails().webPageDetails};
-    const payload = Object.assign({},base,extra);
-    pushADL(payload);
-  }
+ function pushPageLoaded(extra={}){
+
+ const base = {
+   event:'pageLoaded',
+   xdmPageLoad:{
+      custData:getCustData()
+   },
+   web:webDetails().webPageDetails,
+   Hydratestsegment:getHydratestSegmentHistory()
+ };
+
+ const payload = Object.assign({},base,extra);
+
+ pushADL(payload);
+}
 
   function pushLinkClicked(meta){
     const obj = {event:'linkClicked',xdmActionDetails:{web:{webInteraction:meta}}}; pushADL(obj);
