@@ -27,6 +27,7 @@
   function webDetails(){
     return {webPageDetails:{siteName:'ModernShop',pageName:document.title,pageType:location.pathname.replace('/','')||'home',channel:'ecommerce',pageURL:location.href}};
   }
+  
   function getHydratestSegment() {
 
   const path = location.pathname.split('/').pop() || 'index.html';
@@ -51,7 +52,15 @@ function getHydratestSegmentHistory() {
     sessionStorage.getItem('Hydratestsegment')
   ) || [];
 
-  segments.push(getHydratestSegment());
+  const currentSegment = getHydratestSegment();
+
+  // last value check
+  const lastSegment = segments[segments.length - 1];
+
+  // only push if current page is different from last page
+  if(lastSegment !== currentSegment){
+      segments.push(currentSegment);
+  }
 
   sessionStorage.setItem(
     'Hydratestsegment',
